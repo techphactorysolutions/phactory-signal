@@ -1,0 +1,9 @@
+{
+  "name": "phactory-signal",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Dependency-free light and sound communication PWA for iPhone and GitHub Pages",
+  "scripts": {"test": "node --test tests/*.test.js", "start": "python3 -m http.server 8080"},
+  "engines": {"node": ">=20"}
+}

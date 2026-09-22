@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0a1013">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Signal">
+  <meta name="description" content="A private light-and-sound observatory. Analyze light pulses, explore audio frequencies, and compose a response.">
+  <title>Phactory Signal — Light. Sound. Connection.</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="i-scan" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M7 12h10m-5-5v10"/></symbol>
+    <symbol id="i-wave" viewBox="0 0 24 24"><path d="M3 12h3l3-8 6 16 3-8h3"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7V5h6l2 2h10v13H3zM3 10h18"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3 7h4l2-3h6l2 3h4v13H3z"/><circle cx="12" cy="13" r="4"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 15v6h16v-6"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 4 12 8-12 8z"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-save" viewBox="0 0 24 24"><path d="M12 3v13m-5-5 5 5 5-5M4 17v4h16v-4"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-11v2"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m3 10 18-7-7 18-3-8zM11 13 21 3"/></symbol>
+  </defs></svg>
+  <header class="topbar">
+    <a class="brand" href="#scanner" aria-label="Phactory Signal home"><span class="brandmark"><i></i><i></i><i></i><i></i><i></i></span><span>SIGNAL<small>BY PHACTORY</small></span></a>
+    <nav class="navigation" aria-label="App sections">
+      <button class="nav-button active" data-page="scanner" aria-current="page"><svg><use href="#i-scan"/></svg><span>Scanner</span></button>
+      <button class="nav-button" data-page="composer"><svg><use href="#i-wave"/></svg><span>Response deck</span></button>
+      <button class="nav-button" data-page="sessions"><svg><use href="#i-folder"/></svg><span>Sessions</span></button>
+    </nav>
+    <div class="top-actions"><span class="local-badge"><i class="status-dot"></i> ON-DEVICE</span><button id="help" class="icon-button" aria-label="Guide and app information"><svg><use href="#i-info"/></svg></button></div>
+  </header>
+
+  <main>
+    <section id="scanner-page" class="page">
+      <div class="page-heading"><div><p class="eyebrow"><span class="tiny-cross">+</span> OPTICAL / ACOUSTIC OBSERVATORY</p><h1>Every signal has a rhythm.</h1><p class="subheading">Capture the light. Find the pattern. Compose a response.</p></div><div class="unit-label">FIELD UNIT <b>01</b><span>LOCAL ANALYSIS · V1.0</span></div></div>
+      <div class="scanner-grid">
+        <div class="capture-column">
+          <article class="panel capture-panel">
+            <div class="panel-heading"><h2><span class="section-number">01</span> Viewfinder</h2><span id="source-badge" class="tag">STANDBY</span></div>
+            <div class="viewfinder" id="viewfinder">
+              <video id="source-video" class="source-video" playsinline webkit-playsinline preload="metadata" aria-hidden="true"></video>
+              <canvas id="view" width="960" height="600" aria-label="Media viewfinder. Tap a light to focus the detector."></canvas>
+              <div class="view-top"><span id="view-label"><i class="status-dot"></i> OPTICAL CHANNEL</span><span id="timecode">00:00.00</span></div>
+              <div id="idle-overlay" class="idle-overlay"><div class="reticle"><span></span><b>+</b></div><p>Open a channel.</p><span>Your next conversation starts with a signal.</span><button id="demo" class="button demo-button"><svg><use href="#i-play"/></svg> Explore test signal</button></div>
+              <div class="view-bottom"><span id="target-status">AWAITING INPUT</span><span id="frame-count">0 FRAMES</span></div>
+            </div>
+            <div class="input-actions"><button id="camera" class="button primary"><svg><use href="#i-camera"/></svg> Use camera</button><button id="import" class="button"><svg><use href="#i-upload"/></svg> Import media</button><button id="stop-capture" class="button small-square" aria-label="Stop capture" disabled>■</button></div>
+            <input id="media-file" type="file" accept="video/*,image/*" hidden>
+            <div id="playback" class="playback" hidden><button id="play-pause" class="button compact">Play</button><input id="seek" type="range" min="0" max="100" step="0.01" value="0" aria-label="Video position"><span id="duration-label">0:00</span><button id="restart" class="text-button">Restart</button></div>
+            <p id="capture-message" class="capture-message" role="status">Camera, video, or photo. Your media stays on this device.</p>
+            <details class="capture-settings"><summary>Capture settings <span>Threshold · target · audio</span></summary><div class="settings-inner">
+              <label class="range-label" for="threshold">Light threshold <output id="threshold-value">165 / 255</output></label><input id="threshold" type="range" min="50" max="250" value="165">
+              <div class="settings-row"><label class="check-label"><input id="microphone" type="checkbox"> Include microphone with camera</label><button id="reset-target" class="text-button">Reset target</button></div><p class="muted">Tap the viewfinder to isolate a region. Lower the threshold for dim lights. Video seeks start a new trace.</p><button id="demo-again" class="text-button">Run synthetic test signal ↗</button>
+            </div></details>
+          </article>
+          <article class="panel trace-panel"><div class="panel-heading"><h2><span class="section-number">02</span> Pulse timeline</h2><span id="pulse-count" class="tag">0 PULSES</span></div><canvas id="timeline" width="960" height="130" aria-label="Detected pulse timeline"></canvas><div class="trace-footer"><span id="timing-quality">Timing resolution —</span><button id="copy-response" class="text-button" disabled>Use as response <span>↗</span></button></div></article>
+        </div>
+        <aside class="analysis-column">
+          <article class="panel matrix-panel"><div class="panel-heading"><h2><span class="section-number">03</span> Translation matrix</h2><span class="matrix-glyph">⌘</span></div>
+            <div class="readout"><div><span class="overline">PROMINENT AUDIO NOTE</span><div class="note-readout"><strong id="audio-note">—</strong><span id="solfege">NO AUDIO YET</span></div></div><div class="frequency-readout"><strong id="frequency">—</strong><span>Hz · FFT PEAK</span></div></div>
+            <div class="graph-label"><span>AUDIO SPECTRUM</span><span>65 Hz — 4 kHz</span></div><canvas id="spectrum" width="600" height="145" aria-label="Real-time audio frequency spectrum"></canvas>
+            <div class="graph-label"><span>LIGHT INTENSITY</span><span id="intensity-value">—</span></div><canvas id="waveform" width="600" height="105" aria-label="Light intensity over recent frames"></canvas>
+            <div class="color-readout"><span id="color-swatch" class="color-swatch"></span><div><span class="overline">DETECTED COLOR</span><strong id="rgb-label">R — &nbsp; G — &nbsp; B —</strong></div><div class="mapped-note"><span class="overline">COLOR → NOTE</span><strong id="mapped-note">—</strong></div></div><p class="matrix-note">RGB is measured from pixels. Color-to-note mapping is a creative convention.</p>
+          </article>
+          <article class="panel decoder-panel"><div class="panel-heading"><h2><span class="section-number">04</span> Pattern decoder</h2><span id="dictionary-count" class="tag">4 REFERENCES</span></div><div id="matches" class="matches"><div class="decoder-icon">⌁</div><h3>Listening for structure</h3><p>Capture a sequence to compare its notes, rhythm, and pulse groups.</p></div><button id="save-session" class="button full-width" disabled><svg><use href="#i-save"/></svg> Save this session</button></article>
+        </aside>
+      </div>
+      <article class="panel event-panel"><div class="panel-heading"><h2>Signal log</h2><div class="inline-actions"><button id="export-json" class="text-button" disabled>Export JSON</button><button id="export-csv" class="text-button" disabled>CSV ↗</button></div></div><div class="table-scroll"><table><thead><tr><th>PULSE</th><th>ONSET</th><th>DURATION</th><th>COLOR</th><th>AUDIO NOTE</th><th>MAPPED NOTE</th></tr></thead><tbody id="event-log"><tr><td colspan="6" class="empty-table">Your detected pulses will appear here.</td></tr></tbody></table></div></article>
+    </section>
+
+    <section id="composer-page" class="page" hidden>
+      <div class="page-heading"><div><p class="eyebrow"><span class="tiny-cross">+</span> COLOR / TONE SEQUENCER</p><h1>Send something back.</h1><p class="subheading">An instrument for light, sound, and your own shared language.</p></div><span class="unit-label">OUTPUT CHANNEL <b>02</b><span>SCREEN + SPEAKER</span></span></div>
+      <div class="composer-grid"><div>
+        <article class="panel instrument-panel"><div class="panel-heading"><h2>Response deck</h2><span class="tag">TAP TO PLAY + ADD</span></div><div id="pads" class="pads"></div><div class="instrument-footer"><span>DO &nbsp; RE &nbsp; MI &nbsp; FA &nbsp; SOL &nbsp; LA &nbsp; TI</span><span>A4 = 440 Hz</span></div></article>
+        <article class="panel sequence-panel"><div class="panel-heading"><h2>Your sequence <span id="step-count" class="tag">5 STEPS</span></h2><button id="clear-sequence" class="text-button">Clear</button></div><div id="sequence" class="sequence"></div><div id="step-editor" class="step-editor"><p class="overline" id="edit-label">EDIT STEP 01</p><div class="edit-grid"><label>Note<select id="step-note"></select></label><label>Color<input id="step-color" type="color" value="#ffb564"></label><label>On (ms)<input id="step-duration" type="number" min="250" max="4000" step="50" value="650" inputmode="numeric"></label><label>Gap (ms)<input id="step-gap" type="number" min="250" max="4000" step="50" value="350" inputmode="numeric"></label></div><div class="editor-actions"><button id="move-left" class="text-button">← Move</button><button id="move-right" class="text-button">Move →</button><button id="remove-step" class="text-button danger-text">Remove step</button></div></div><div class="sequence-actions"><button id="preview" class="button"><svg><use href="#i-play"/></svg> Preview sound</button><button id="broadcast" class="button primary"><svg><use href="#i-send"/></svg> Broadcast</button></div></article>
+      </div><aside>
+        <article class="panel presets-panel"><div class="panel-heading"><h2>Start with a pattern</h2><span class="section-number">↗</span></div><div id="presets" class="preset-list"></div></article>
+        <article class="panel output-panel"><div class="panel-heading"><h2>Output controls</h2></div><div class="output-inner"><label class="range-label" for="volume">Synth volume<output id="volume-value">25%</output></label><input id="volume" type="range" min="0" max="70" value="25"><div class="edit-grid two"><label>Waveform<select id="synth-wave"><option value="sine">Sine · pure</option><option value="triangle">Triangle · warm</option></select></label><label>Repeat<select id="repeat"><option value="1">Once</option><option value="2">Twice</option><option value="3">3 times</option></select></label></div><label class="check-label"><input id="soft-light" type="checkbox" checked> Soft light transitions</label><p class="muted">Set screen brightness in Control Center. Transmission runs while this app is visible.</p><button id="save-pattern" class="button full-width">Save to my dictionary</button></div></article>
+      </aside></div>
+    </section>
+
+    <section id="sessions-page" class="page" hidden><div class="page-heading"><div><p class="eyebrow"><span class="tiny-cross">+</span> THE SIGNAL ARCHIVE</p><h1>A record of your encounters.</h1><p class="subheading">Saved measurements and the patterns you have made your own.</p></div><span class="unit-label">DEVICE STORAGE <b>03</b><span>EXPORT TO KEEP A BACKUP</span></span></div><div class="archive-grid"><article class="panel"><div class="panel-heading"><h2>Saved sessions</h2><span id="saved-count" class="tag">0 SESSIONS</span></div><div id="sessions-list" class="archive-list"></div></article><article class="panel"><div class="panel-heading"><h2>My dictionary</h2><button id="import-patterns" class="text-button">Import ↗</button></div><div id="patterns-list" class="archive-list"></div><input id="pattern-file" type="file" accept="application/json,.json" hidden><div class="panel-bottom"><button id="export-patterns" class="button full-width">Export dictionary</button></div></article></div></section>
+
+    <footer><span><span class="status-dot"></span> YOUR SIGNALS STAY WITH YOU.</span><span>Designed by Tech Phactory Solutions</span></footer>
+  </main>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <dialog id="guide-dialog"><div class="dialog-heading"><p class="eyebrow">PHACTORY SIGNAL</p><button class="icon-button close-dialog" aria-label="Close guide">×</button></div><h2>From observation to response.</h2><ol class="guide-steps"><li><b>Open a channel.</b> Use the rear camera, import a video or photo, or explore the synthetic test signal. Allow camera access in Safari when asked.</li><li><b>Choose your light.</b> Tap the viewfinder to isolate a region. Adjust the threshold until the intended light is detected. Audio uses the video soundtrack; live microphone capture is optional.</li><li><b>Read the pattern.</b> Review measured RGB, pulse durations, prominent audio notes, and reference matches. A still photo has no timing or audio information.</li><li><b>Compose a reply.</b> Tap the colored keys, edit each step, and broadcast with the display and speakers. Both phones must share a pattern dictionary to assign meaning.</li></ol><div class="guide-note"><b>Add to your iPhone Home Screen</b><p>Open the hosted app in Safari → Share → Add to Home Screen. Open once online to cache the app for offline use.</p></div><details><summary>Understanding the measurements</summary><p>Tracking uses brightness segmentation and connected regions, not semantic object identification. RGB values depend on exposure, white balance, clipping, compression, and downsampling; they do not measure an optical wavelength or spectrum.</p><p>Timing is limited by analyzed video frames, browser scheduling, and display refresh. The log reports frame timing and missed frames. FFT identifies a prominent frequency, which may be a harmonic; it is not reliable polyphonic transcription.</p><p>Notes assigned to colors are an editable creative convention. Reference matches cannot establish the source, intent, or meaning of an unknown signal. The five-tone preset is a cinematic reference; SOS uses International Morse.</p></details><p class="muted">No accounts, analytics, media uploads, or external runtime dependencies. Sessions and dictionaries are stored in this browser. Clearing website data removes them; export backups.</p><button class="button primary full-width close-dialog">Start exploring</button></dialog>
+  <dialog id="name-dialog"><form id="name-form"><div class="dialog-heading"><p class="eyebrow" id="name-purpose">SAVE</p><button type="button" class="icon-button close-dialog" aria-label="Cancel">×</button></div><h2 id="name-title">Name this session</h2><label>Name<input id="item-name" maxlength="60" required autocomplete="off"></label><button type="submit" class="button primary full-width">Save</button></form></dialog>
+  <dialog id="broadcast-dialog"><div class="dialog-heading"><p class="eyebrow">TRANSMISSION</p><button class="icon-button close-dialog" aria-label="Cancel broadcast">×</button></div><h2>Light up the channel.</h2><p>This plays tones and flashes screen colors. Avoid light output if you are sensitive to flashing lights. An on-screen Stop button stays available.</p><p class="muted">Raise brightness manually in Control Center. Keep this app open and point the display toward the receiver.</p><div id="broadcast-summary" class="broadcast-summary"></div><button id="start-broadcast" class="button primary full-width">Start light + sound</button></dialog>
+  <div id="transmission" class="transmission" hidden role="dialog" aria-modal="true" aria-label="Light and sound transmission"><div id="light-field" class="light-field"></div><div class="transmission-hud"><p class="eyebrow">PHACTORY SIGNAL / TRANSMITTING</p><strong id="transmit-note">Ready</strong><span id="transmit-progress">Starting…</span><button id="stop-broadcast" class="button stop-button">■ Stop transmission</button></div></div>
+  <noscript><div class="no-js">Enable JavaScript in Safari to use Phactory Signal.</div></noscript>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
